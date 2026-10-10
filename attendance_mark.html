@@ -1,0 +1,40 @@
+{% extends 'students/base.html' %}
+{% block title %}Mark Attendance{% endblock %}
+{% block content %}
+<h1>Mark Attendance</h1>
+
+{% for m in messages %}<p style="color:green"><strong>{{ m }}</strong></p>{% endfor %}
+
+<form method="get">
+    <select name="class_subject" required>
+        <option value="">Select class and subject</option>
+        {% for cs in class_subjects %}
+        <option value="{{ cs.id }}" {% if selected and selected.id == cs.id %}selected{% endif %}>{{ cs }}</option>
+        {% endfor %}
+    </select>
+    <input type="date" name="date" value="{{ date_value }}">
+    <button type="submit">Load students</button>
+</form>
+<br>
+
+{% if selected %}
+<form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="class_subject" value="{{ selected.id }}">
+    <input type="hidden" name="date" value="{{ date_value }}">
+    <table>
+        <tr><th>Present</th><th>Roll No</th><th>Name</th></tr>
+        {% for s in students %}
+        <tr>
+            <td><input type="checkbox" name="present" value="{{ s.id }}" {% if s.id in present_ids %}checked{% endif %}></td>
+            <td>{{ s.roll_number }}</td>
+            <td>{{ s.user.first_name }} {{ s.user.last_name }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">No active students in this class.</td></tr>
+        {% endfor %}
+    </table>
+    <button type="submit">Save attendance</button>
+</form>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'students/base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Dashboard</h1>
+
+<form method="get" action="{% url 'students:student_list' %}">
+    <input type="text" name="q" placeholder="Search student by name or roll no" size="35">
+    <button type="submit">Search</button>
+</form>
+<br>
+
+<div class="cards">
+    <div class="card"><h2>{{ student_count }}</h2><p>Active Students</p></div>
+    <div class="card"><h2>{{ class_count }}</h2><p>Classes</p></div>
+    <div class="card"><h2>{{ department_count }}</h2><p>Departments</p></div>
+    <div class="card"><h2>{{ pending_fees }}</h2><p>Pending Fees</p></div>
+</div>
+<br>
+
+<p class="links">
+    <a href="{% url 'students:student_create' %}">+ Add Student</a>
+    <a href="{% url 'students:attendance_mark' %}">Mark Attendance</a>
+    <a href="{% url 'students:fee_add' %}">+ Add Fee</a>
+    <a href="{% url 'students:export_excel' %}">Export to Excel</a>
+</p>
+
+<h3>Recently Added Students</h3>
+<table>
+    <tr><th>Roll No</th><th>Name</th><th>Class</th></tr>
+    {% for s in recent_students %}
+    <tr>
+        <td>{{ s.roll_number }}</td>
+        <td><a href="{% url 'students:student_detail' s.pk %}">{{ s.user.first_name }} {{ s.user.last_name }}</a></td>
+        <td>{{ s.class_room }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3">No students yet.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}
